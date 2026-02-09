@@ -1,0 +1,52 @@
+name: QA Automation Pipeline
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch: # Permite rodar manualmente pelo painel do GitHub
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Run Regression Tests
+        # Rodando em modo headless para ambientes sem interface gráfica
+        run: mvn test -Denv=hml -Dheadless=true -Dcucumber.filter.tags="@regressivo"
+        continue-on-error: true # Permite gerar o relatório mesmo se houver falhas
+
+      - name: Get Allure History
+        uses: actions/checkout@v4
+        if: always()
+        continue-on-error: true
+        with:
+          ref: gh-pages
+          path: gh-pages
+
+      - name: Generate Allure Report
+        uses: simple-elf/allure-report-action@master
+        if: always()
+        with:
+          allure_results: target/allure-results
+          allure_history: allure-history
+          keep_reports: 20
+
+      - name: Deploy Report to GitHub Pages
+        if: always()
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: allure-history
+          publish_branch: gh-pages
