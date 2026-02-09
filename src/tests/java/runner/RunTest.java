@@ -13,7 +13,7 @@ import static io.cucumber.junit.platform.engine.Constants.PARALLEL_EXECUTION_ENA
 @IncludeEngines("cucumber")
 @SelectClasspathResource("features")
 // Define onde estão os steps e os relatórios
-@ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "steps")
+@ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "tests.java.steps")
 @ConfigurationParameter(key = PLUGIN_PROPERTY_NAME, value = "pretty, io.qameta.allure.cucumber7jvm.AllureCucumber7Jvm")
 // Habilita a execução paralela
 @ConfigurationParameter(key = PARALLEL_EXECUTION_ENABLED_PROPERTY_NAME, value = "true")
