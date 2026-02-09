@@ -19,6 +19,6 @@ public class CloudManager {
         String connectionString = System.getProperty("azure.connection.string");
         return new BlobServiceClientBuilder()
                 .connectionString(connectionString)
-                .build();
+                .buildClient();
     }
 }
